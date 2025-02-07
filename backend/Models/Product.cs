@@ -34,6 +34,9 @@ public class Product
 
     public ICollection<ProductColor> ProductColors = new List<ProductColor>();
 
+    [NotMapped]
+    public List<Color> Colors => ProductColors.Select(pc => pc.Color).ToList();
+
     public Product(string name, string brand, ProductType type, string imageName, ICollection<ProductColor> productColors)
     {
         Name = name;

@@ -11,13 +11,15 @@ public class ClothingDbContext : DbContext
 
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductColor> ProductColors { get; set; }
+    public DbSet<Color> Colors { get; set; }
     
     //TODO: add onmodelcreating to use fluent api
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ProductColor>()
-            .HasKey(pc => new { pc.ProductId, pc.Color });
+            .HasKey(pc => new { pc.ProductId, pc.ExactColor });
         modelBuilder.Entity<Product>().HasMany(p => p.ProductColors).WithOne(pc => pc.Product)
             .HasForeignKey(pc => pc.ProductId);
+        modelBuilder.Entity<Color>().HasMany(c => c.ProductColors).WithOne(pc => pc.Color).HasForeignKey(pc => pc.ColorId);
     }
 }

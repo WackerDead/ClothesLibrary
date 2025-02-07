@@ -3,6 +3,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ClothingDbContext))]
-    partial class ClothingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250202193937_colorName")]
+    partial class colorName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,26 +23,6 @@ namespace Backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("Backend.Models.Color", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<uint>("Value")
-                        .HasColumnType("int unsigned");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Colors");
-                });
 
             modelBuilder.Entity("Backend.Models.Product", b =>
                 {
@@ -74,41 +57,27 @@ namespace Backend.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<uint>("ExactColor")
+                    b.Property<uint>("Color")
                         .HasColumnType("int unsigned");
 
-                    b.Property<int>("ColorId")
-                        .HasColumnType("int");
+                    b.Property<string>("ColorName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                    b.HasKey("ProductId", "ExactColor");
-
-                    b.HasIndex("ColorId");
+                    b.HasKey("ProductId", "Color");
 
                     b.ToTable("ProductColors");
                 });
 
             modelBuilder.Entity("Backend.Models.ProductColor", b =>
                 {
-                    b.HasOne("Backend.Models.Color", "Color")
-                        .WithMany("ProductColors")
-                        .HasForeignKey("ColorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Backend.Models.Product", "Product")
                         .WithMany("ProductColors")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Color");
-
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Backend.Models.Color", b =>
-                {
-                    b.Navigation("ProductColors");
                 });
 
             modelBuilder.Entity("Backend.Models.Product", b =>

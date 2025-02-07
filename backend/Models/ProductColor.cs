@@ -8,12 +8,17 @@ public class ProductColor
 {
     [JsonIgnore]public int ProductId { get; set; }
     [JsonIgnore]public Product Product { get; set; }
-    public uint Color { get; set; } //rgba
-    public string ColorName { get; set; }
+    [JsonIgnore]public int ColorId { get; set; }
+    [JsonIgnore]public Color Color { get; set; }
+    public uint ExactColor { get; set; } //rgba
 
-    public ProductColor(uint color, string colorName)
+    public ProductColor(uint exactColor, Color color)
     {
+        ExactColor = exactColor;
         Color = color;
-        ColorName = colorName;
+    }
+    
+    public ProductColor()
+    {
     }
 }

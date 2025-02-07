@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.ColorSpaces.Conversion;
 using SixLabors.ImageSharp.PixelFormats;
+using Color = Backend.Models.Color;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +56,7 @@ using (var scope = app.Services.CreateScope())
     {
         throw new InvalidOperationException("Failed to retrieve the database context.");
     }
-    SeedDatabase(context);
+    
 }*/
 
 // Configure the HTTP request pipeline.

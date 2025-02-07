@@ -42,7 +42,7 @@ export default function ClothesDetails({
 				onClick={close}
 				className="absolute right-5 top-5 cursor-pointer rounded-lg bg-red-500 p-1 text-white"
 			>
-				x
+				xa
 			</div>
 			<div className="absolute left-1/2 top-1/3 flex h-fit w-1/2 -translate-x-1/2 -translate-y-1/3 transform flex-col items-center justify-center rounded-lg border-2 border-gray-300 bg-white px-12 py-20">
 				<h1>{product.name === "" ? "Add a new item" : "Edit the item"}</h1>

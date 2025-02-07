@@ -3,6 +3,8 @@ import ClothesCard from "./ClothesCard";
 import ClothesDetails from "./ClothesDetails";
 import axios from "axios";
 import { Edit } from "./ClothesRegistration";
+import { UseClothes } from "./ClothesContext";
+import ClothesFilter from "./ClothesFilter";
 
 export type Clothing = {
 	id?: number;
@@ -10,58 +12,78 @@ export type Clothing = {
 	brand: string;
 	type: string;
 	imageName: string;
+	colors?: any[];
+	isWaiting?: boolean;
 };
 
-export default function Products() {
-	const [clothes, setClothes] = useState([] as Clothing[]);
-	const [editing, setEditing] = useState(false);
-	const [clothToEdit, setClothToEdit] = useState({} as Clothing);
+export type ClothesFilterType = {
+	brand?: string[];
+	type?: string[];
+	colors?: string[];
+};
 
-	const populateClothesData = async () => {
-		const response = await fetch("/api/clothes");
-		const data = await response.json();
-		setClothes(data);
+export const uintToHex = (c: number) => {
+	const hex = c.toString(16).padStart(6, "0");
+	return "#" + hex;
+};
+
+export default function Clothes() {
+	const { clothes } = UseClothes();
+	const [filtered, setFiltered] = useState<Clothing[]>(clothes);
+	const [editing, setEditing] = useState(false);
+	const [clothToEdit, setClothToEdit] = useState<Clothing | null>(null);
+	const [filter, setFilter] = useState<ClothesFilterType>({});
+
+	const onFilter = (f: ClothesFilterType) => {
+		console.log(filter);
+		const filteredClothes = clothes.filter((c) => {
+			if (f.brand && f.brand.length > 0 && !f.brand.includes(c.brand)) {
+				return false;
+			}
+			if (f.type && f.type.length > 0 && !f.type.includes(c.type)) {
+				return false;
+			}
+			if (!c.isWaiting && !c.colors) {
+				throw new Error(`Clothing item ${c.name} has no colors`);
+			}
+			if (
+				c.colors != undefined &&
+				f.colors &&
+				f.colors.length > 0 &&
+				!c.colors.map((c) => c).some((color) => f.colors.includes(color.name))
+			) {
+				return false;
+			}
+			return true;
+		});
+		setFiltered(filteredClothes);
 	};
 
 	useEffect(() => {
-		populateClothesData();
-	}, []);
+		onFilter(filter);
+		console.log(clothes);
+	}, [clothes]);
 
 	return (
 		<div>
-			{/* <div>
-				{editing ? (
-					<ClothesDetails
-						product={clothToEdit}
-						submit={(e) => {
-							console.log("asdad");
-							const formData = new FormData(e.currentTarget);
-							let a: Blob;
-							fetch("http://localhost:5000/Upload" + clothToEdit.imageName)
-								.then((res) => res.blob())
-								.then((res) => (a = res));
-							console.log(a);
-							console.log(formData);
-							formData.set("image", a);
-							axios.put("api/clothes/" + clothToEdit.id, formData);
-						}}
-						close={() => {
-							setEditing(false);
-							setClothToEdit({} as Clothing);
-						}}
-					/>
-				) : (
-					""
-				)}
-			</div> */}
+			<ClothesFilter
+				onFilter={(f) => {
+					setFilter(f);
+					onFilter(f);
+				}}
+			/>
 			<Edit
 				clothing={clothToEdit}
 				open={editing}
-				close={() => setEditing(false)}
+				close={() => {
+					setEditing(false);
+					setClothToEdit(null);
+				}}
 			/>
 			<div className="flex flex-row flex-wrap justify-center">
-				{clothes.map((clothing) => (
+				{filtered.map((clothing) => (
 					<ClothesCard
+						key={clothing.id}
 						clothing={clothing}
 						editMethod={() => {
 							setEditing(true);

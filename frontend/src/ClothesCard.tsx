@@ -24,6 +24,16 @@ export default function ClothesCard({
 			<h1>{clothing.name}</h1>
 			<h2>{clothing.brand}</h2>
 			<h3>{clothing.type}</h3>
+			{clothing.colors != undefined &&
+				clothing.colors.map((color) => (
+					<div key={color.id} className="flex flex-row items-center">
+						<div
+							className="me-1 h-4 w-4 rounded-full"
+							style={{ backgroundColor: color.name }}
+						/>
+						{color.name}
+					</div>
+				))}
 		</div>
 	);
 }

@@ -4,6 +4,7 @@ import "./App.css";
 import Products from "./Clothes";
 import Navbar from "./Navbar";
 import Outfits from "./Outfits";
+import { ClothesProvider } from "./ClothesContext";
 
 export default function App() {
 	const [forecasts, setForecasts] = useState([]);
@@ -37,11 +38,13 @@ export default function App() {
 	return (
 		<div className="App">
 			<BrowserRouter>
-				<Routes>
-					<Route path="/" element={<Products />} />
-					<Route path="/fits" element={<Outfits />} />
-				</Routes>
-				<Navbar />
+				<ClothesProvider>
+					<Routes>
+						<Route path="/" element={<Products />} />
+						<Route path="/fits" element={<Outfits />} />
+					</Routes>
+					<Navbar />
+				</ClothesProvider>
 			</BrowserRouter>
 		</div>
 	);
