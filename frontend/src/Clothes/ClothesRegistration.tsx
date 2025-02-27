@@ -1,8 +1,8 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import Popup from "./Popup";
+import Popup from "../Popup";
 import { Clothing } from "./Clothes";
 import axios from "axios";
-import { UseClothes } from "./ClothesContext";
+import { UseClothes } from "../ClothesContext";
 
 export function Add({ open, close }: { open: boolean; close: () => void }) {
 	const { addClothing } = UseClothes();
@@ -31,6 +31,7 @@ export function Add({ open, close }: { open: boolean; close: () => void }) {
 				body: formData,
 			});*/
 			try {
+				console.log(formData);
 				const response = await axios.post("api/clothes", formData);
 				addClothing(response.data);
 			} catch (error) {

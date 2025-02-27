@@ -1,14 +1,19 @@
 import { NavLink } from "react-router-dom";
-import { Add } from "./ClothesRegistration";
+import { Add } from "./Clothes/ClothesRegistration";
 import { useState } from "react";
 import { UseClothes } from "./ClothesContext";
+import { AddFit } from "./Outfits/OutfitRegistration";
 
 const Navbar = () => {
 	const [adding, setAdding] = useState(false);
 	const { refreshClothes } = UseClothes();
 	return (
 		<div>
-			<Add open={adding} close={() => setAdding(false)} />
+			{window.location.pathname === "/fits" ? (
+				<AddFit open={adding} close={() => setAdding(false)} />
+			) : (
+				<Add open={adding} close={() => setAdding(false)} />
+			)}
 			<footer className="h-16">
 				<nav className="fixed bottom-0 mx-auto flex h-16 w-full items-center justify-around border-t border-gray-300 bg-white">
 					<div

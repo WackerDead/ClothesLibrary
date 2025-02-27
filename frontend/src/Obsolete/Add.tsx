@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import ClothesDetails from "./ClothesDetails";
+import ClothesDetails from "./ClothesCreator";
 
 export default function Add({ close }: { close: () => void }) {
 	function AddProduct(e: FormEvent<HTMLFormElement>) {

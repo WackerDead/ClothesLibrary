@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Clothing } from "./Clothes";
+import { Clothing } from "../Clothes/Clothes";
 
 export default function ClothesDetails({
 	product,

@@ -8,6 +8,7 @@ using Backend.Data;
 using Backend.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using Color = Backend.Models.Color;
 
 namespace Backend;
@@ -83,11 +84,13 @@ public class ClothesController : ControllerBase
         Console.WriteLine(productDto.Type);
         string fileName = DateTime.Now.Ticks + ".png";
         var path = Path.Combine(_environment.ContentRootPath, "Upload", fileName);
-        Image<Rgba32> image;
+        Image<Rgba32> image = await ConvertToImage(productDto.Image);
+        image = CropImage(image);
 
         try
         {
-            image = await SaveImage(productDto.Image, path);
+            //image = await SaveImage(productDto.Image, path);
+            await image.SaveAsPngAsync(path);
         }
         catch (Exception e)
         {
@@ -134,13 +137,15 @@ public class ClothesController : ControllerBase
         product.Type = (ProductType)Enum.Parse(typeof(ProductType), productDto.Type, true);
         if (productDto.Image.FileName != product.ImageName)
         {
-            string fileName = productDto.Type + "_" + productDto.Image.FileName;
+            string fileName = DateTime.Now.Ticks + ".png";
             var path = Path.Combine(_environment.ContentRootPath, "Upload", fileName);
-            Image<Rgba32> image;
+            Image<Rgba32> image = await ConvertToImage(productDto.Image);
+            image = CropImage(image);
 
             try
             {
-                image = await SaveImage(productDto.Image, path);
+                //image = await SaveImage(productDto.Image, path);
+                await image.SaveAsPngAsync(path);
             }
             catch (Exception e)
             {
@@ -150,7 +155,7 @@ public class ClothesController : ControllerBase
 
             //TODO: delete old image
             oldImage = product.ImageName;
-            DeleteImage(oldImage);
+            DeleteImage(Path.Combine(_environment.ContentRootPath, "Upload", oldImage));
 
             var productColors = GetProductColors(image);
             _context.ProductColors.RemoveRange(_context.ProductColors.Where(pc => pc.ProductId == product.Id));
@@ -177,10 +182,53 @@ public class ClothesController : ControllerBase
 
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
-        DeleteImage(product.ImageName);
+        DeleteImage(Path.Combine(_environment.ContentRootPath, "Upload", product.ImageName));
         return Ok(new { message = "Product deleted successfully" });
     }
 
+    private static async Task<Image<Rgba32>> ConvertToImage(IFormFile image)
+    {
+        await using Stream imageStream = image.OpenReadStream();
+        imageStream.Position = 0;
+
+        return await Image.LoadAsync<Rgba32>(imageStream);
+    }
+
+    private static Image<Rgba32> CropImage(Image<Rgba32> image)
+    {
+        int left = int.MaxValue, top = int.MaxValue;
+        int right = 0, bottom = 0;
+        
+        Image<Rgba32> newImage = image.CloneAs<Rgba32>();
+
+        for (int i = 0; i < image.Width; i++)
+        {
+            for (int j = 0; j < image.Height; j++)
+            {
+                Rgba32 pixel = image[i, j];
+                if (pixel.A == 0) continue;
+
+                if (j < top)
+                {
+                    Console.WriteLine(j);
+                    top = j;
+                }
+                if (j > bottom) bottom = j;
+                if (i < left) left = i;
+                if (i > right) right = i;
+            }
+        }
+        
+        newImage.Mutate(x => x.Crop(Rectangle.FromLTRB(left, top, right, bottom)));
+        
+        return newImage;
+    }
+    
+    private static async Task SaveImage(Image image, string path)
+    {
+        await image.SaveAsPngAsync(path);
+    }
+    
     private static async Task<Image<Rgba32>> SaveImage(IFormFile image, string path)
     {
         await using Stream imageStream = image.OpenReadStream();
@@ -193,10 +241,10 @@ public class ClothesController : ControllerBase
         return await Image.LoadAsync<Rgba32>(imageStream);
     }
 
-    private void DeleteImage(string oldImage)
+    public static void DeleteImage(string path)
     {
-        Console.WriteLine("Deleting image - {0}", oldImage);
-        System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "Upload", oldImage));
+        Console.WriteLine("Deleting image - {0}", path);
+        System.IO.File.Delete(path);
     }
 
     private List<ProductColor> GetProductColors(Image<Rgba32> image)

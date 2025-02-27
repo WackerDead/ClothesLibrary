@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Clothing } from "./Clothes";
+import { Clothing, uintToHex } from "./Clothes";
+import chroma from "chroma-js";
 
 export default function ClothesCard({
 	clothing,
@@ -17,8 +18,8 @@ export default function ClothesCard({
 				e
 			</div>
 			<img
-				className="aspect-square w-96 object-cover"
-				src={"http://localhost:5000/Upload/" + clothing.imageName}
+				className="aspect-square w-96 object-contain"
+				src={"api/Upload/" + clothing.imageName}
 				alt=""
 			/>
 			<h1>{clothing.name}</h1>
@@ -29,7 +30,10 @@ export default function ClothesCard({
 					<div key={color.id} className="flex flex-row items-center">
 						<div
 							className="me-1 h-4 w-4 rounded-full"
-							style={{ backgroundColor: color.name }}
+							style={{
+								backgroundColor: color.name,
+								border: `1px solid ${chroma(uintToHex(color.value)).darken().css()}`,
+							}}
 						/>
 						{color.name}
 					</div>

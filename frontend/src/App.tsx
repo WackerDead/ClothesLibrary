@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Products from "./Clothes";
+import Products from "./Clothes/Clothes";
 import Navbar from "./Navbar";
-import Outfits from "./Outfits";
+import Outfits from "./Outfits/Outfits";
 import { ClothesProvider } from "./ClothesContext";
 
 export default function App() {

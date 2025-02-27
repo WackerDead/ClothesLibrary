@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import ClothesCard from "./ClothesCard";
-import ClothesDetails from "./ClothesDetails";
 import axios from "axios";
 import { Edit } from "./ClothesRegistration";
-import { UseClothes } from "./ClothesContext";
+import { UseClothes } from "../ClothesContext";
 import ClothesFilter from "./ClothesFilter";
 
 export type Clothing = {

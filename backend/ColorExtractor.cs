@@ -143,7 +143,7 @@ public class ColorExtractor
             var rgba32 = new Rgba32(c.R, c.G, c.B);
             Console.WriteLine("#{0} : {1}", rgba32.ToHex(),
                 hueClusters[hue]);
-            if(i < recommendedSize) palette.Add(rgba32);
+            if(i < recommendedSize && !palette.Contains(rgba32)) palette.Add(rgba32);
         }
 
         return palette;

@@ -30,6 +30,8 @@ public class Product
     public ProductType Type { get; set; }
     //public WeatherType Weather { get; set; } = WeatherType.Any;
     
+    public bool Favorite { get; set; } = false;
+    
     public string ImageName { get; set; }
 
     public ICollection<ProductColor> ProductColors = new List<ProductColor>();

@@ -2,7 +2,7 @@ import axios from "axios";
 import { ClothingTypes } from "./ClothesRegistration";
 import { FormEvent, FormEventHandler, useEffect, useState } from "react";
 import { ClothesFilterType, uintToHex } from "./Clothes";
-import { UseClothes } from "./ClothesContext";
+import { UseClothes } from "../ClothesContext";
 import Select, { Options, StylesConfig } from "react-select";
 import chroma from "chroma-js";
 
